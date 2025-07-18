@@ -1,22 +1,29 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-import {StyleSheet, View} from "react-native";
-import {ActivityIndicator, Button, TextInput} from "react-native-paper";
-import {useDairyController} from "@/screens/stats/controller/useDairyController";
+import {StyleSheet, Text, View} from "react-native";
+import {Button, TextInput} from "react-native-paper";
+import {useDairyController} from "@/screens/dairy/controller/useDairyController";
 
 export const DairyScreen = () => {
   
-  const [stepsAmount, setStepsAmount, handleSubmit, isPending] = useDairyController()
+  const [stepsAmount, setStepsAmount, handleSubmit, isPending, userInputError, clearErrors] = useDairyController()
   
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <TextInput
+          clearTextOnFocus
+          error={userInputError.isError}
           mode={'outlined'}
           placeholder={'enter your steps'}
           label={'Your daily steps'}
+          onFocus={clearErrors}
           onChangeText={text => setStepsAmount(text)}
           value={stepsAmount?.toString()}
         />
+        {
+          userInputError.isError
+          && <Text style={styles.error}>{userInputError.errorMessage}</Text>
+        }
         <Button
           mode={'contained'}
           onPress={handleSubmit}
@@ -41,5 +48,9 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 22,
     lineHeight: 22,
+  },
+  error: {
+    color: 'red',
+    fontSize: 14,
   }
 });
